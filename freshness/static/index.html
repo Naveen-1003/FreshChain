@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Traceability System - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .api-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .api-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e1e5e9;
+            padding-bottom: 10px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover {
+            background: #e6e9ff;
+        }
+        
+        .file-upload.dragover {
+            border-color: #4c6ef5;
+            background: #e6e9ff;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 300px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Retailer Management Styles */
+        .suggestion-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .suggestion-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .inventory-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-indicator {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-fresh {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-expiring {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-expired {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .priority-high {
+            border-left-color: #dc3545 !important;
+        }
+        
+        .priority-medium {
+            border-left-color: #ffc107 !important;
+        }
+        
+        .priority-low {
+            border-left-color: #28a745 !important;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .quick-action-btn {
+            padding: 6px 12px;
+            margin: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-action-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍎 Food Traceability System</h1>
+            <p>Blockchain-powered supply chain tracking with AI quality assessment</p>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="api-section">
+            <h2>📊 System Dashboard</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalBatches">-</div>
+                    <div class="stat-label">Total Batches</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeTransports">-</div>
+                    <div class="stat-label">Active Transports</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="qualityAlerts">-</div>
+                    <div class="stat-label">Quality Alerts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgQuality">-</div>
+                    <div class="stat-label">Avg Quality Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="approvalRate">-</div>
+                    <div class="stat-label">Approval Rate %</div>
+                </div>
+            </div>
+            <button class="btn" onclick="loadDashboardStats()">🔄 Refresh Stats</button>
+        </div>
+
+        <!-- API Testing Tabs -->
+        <div class="api-section">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('manufacturer')">🏭 Manufacturer</div>
+                <div class="tab" onclick="switchTab('transporter')">🚛 Transporter</div>
+                <div class="tab" onclick="switchTab('retailer')">🏪 Retailer Operations</div>
+                <div class="tab" onclick="switchTab('retailer-manage')">📊 Retailer Management</div>
+                <div class="tab" onclick="switchTab('analytics')">📊 Analytics</div>
+                <div class="tab" onclick="switchTab('analytics')">📊 Analytics</div>
+            </div>
+
+            <!-- Manufacturer Tab -->
+            <div class="tab-content active" id="manufacturer">
+                <h2>🏭 Manufacturer Operations</h2>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>📦 Create New Batch</h3>
+                        <form id="batchForm">
+                            <div class="form-group">
+                                <label>Product Name</label>
+                                <select id="productName">
+                                    <option value="Apple">Apple</option>
+                                    <option value="Banana">Banana</option>
+                                    <option value="Orange">Orange</option>
+                                    <option value="Tomato">Tomato</option>
+                                    <option value="Cucumber">Cucumber</option>
+                                    <option value="Carrot">Carrot</option>
+                                    <option value="Potato">Potato</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantity (kg)</label>
+                                <input type="number" id="quantity" value="100" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Harvest Date</label>
+                                <input type="date" id="harvestDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Origin Location</label>
+                                <input type="text" id="origin" value="Green Valley Farm - California">
+                            </div>
+                            <div class="form-group">
+                                <label>Freshness Score (0-100)</label>
+                                <input type="number" id="freshnessScore" value="95" min="0" max="100">
+                            </div>
+                            <button type="submit" class="btn">📦 Create Batch</button>
+                        </form>
+                        <div class="result" id="batchResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔍 Batch Lookup</h3>
+                        <div class="form-group">
+                            <label>Batch ID</label>
+                            <input type="text" id="lookupBatchId" placeholder="Enter batch ID">
+                        </div>
+                        <button class="btn" onclick="lookupBatch()">🔍 Lookup Batch</button>
+                        <div class="result" id="lookupResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transporter Tab -->
+            <div class="tab-content" id="transporter">
+                <h2>🚛 Transporter Operations</h2>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>📊 Environmental Reading</h3>
+                        <form id="environmentalForm">
+                            <div class="form-group">
+                                <label>Vehicle ID</label>
+                                <input type="text" id="vehicleId" value="TRUCK_001">
+                            </div>
+                            <div class="form-group">
+                                <label>Batch IDs (comma-separated)</label>
+                                <input type="text" id="batchIds" placeholder="BATCH_001, BATCH_002">
+                            </div>
+                            <div class="form-group">
+                                <label>Temperature (°C)</label>
+                                <input type="number" id="temperature" value="4.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Humidity (%)</label>
+                                <input type="number" id="humidity" value="85.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>GPS Latitude</label>
+                                <input type="number" id="gpsLat" step="0.000001" placeholder="37.7749">
+                            </div>
+                            <div class="form-group">
+                                <label>GPS Longitude</label>
+                                <input type="number" id="gpsLng" step="0.000001" placeholder="-122.4194">
+                            </div>
+                            <button type="submit" class="btn">📊 Record Reading</button>
+                        </form>
+                        <div class="result" id="environmentalResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📱 QR Scan Record</h3>
+                        <form id="qrScanForm">
+                            <div class="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" id="scanBatchId" placeholder="Enter batch ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Operator ID</label>
+                                <input type="text" id="operatorId" value="TRANS_001">
+                            </div>
+                            <div class="form-group">
+                                <label>Scan Type</label>
+                                <select id="scanType">
+                                    <option value="load">Load</option>
+                                    <option value="unload">Unload</option>
+                                    <option value="receive">Receive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Vehicle ID</label>
+                                <input type="text" id="scanVehicleId" value="TRUCK_001">
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="scanLocation" value="Distribution Center A">
+                            </div>
+                            <button type="submit" class="btn">📱 Record Scan</button>
+                        </form>
+                        <div class="result" id="qrScanResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retailer Tab -->
+            <div class="tab-content" id="retailer">
+                <h2>🏪 Retailer Operations</h2>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>🔍 Freshness Assessment</h3>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+                            Upload a photo for automatic freshness assessment using our CNN AI model
+                        </p>
+                        <form id="freshnessForm">
+                            <div class="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" id="freshBatchId" placeholder="Enter batch ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Retailer ID</label>
+                                <input type="text" id="retailerId" value="RETAIL_001">
+                            </div>
+                            <div class="form-group">
+                                <label>Product Type</label>
+                                <select id="productType">
+                                    <option value="apple">Apple</option>
+                                    <option value="banana">Banana</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="tomato">Tomato</option>
+                                    <option value="cucumber">Cucumber</option>
+                                    <option value="carrot">Carrot</option>
+                                    <option value="potato">Potato</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Freshness Category</label>
+                                <select id="freshnessCategory">
+                                    <option value="FRESH">FRESH</option>
+                                    <option value="MEDIUM FRESH">MEDIUM FRESH</option>
+                                    <option value="NOT FRESH">NOT FRESH</option>
+                                </select>
+                                <small style="color: #666;">Manual assessment - AI will provide its own assessment</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Is Packed Item?</label>
+                                <select id="isPacked">
+                                    <option value="false">No (Requires Visual Assessment)</option>
+                                    <option value="true">Yes (Skip Visual Assessment)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Visual Notes</label>
+                                <textarea id="visualNotes" placeholder="Visual inspection notes..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Product Image (Required for AI analysis)</label>
+                                <input type="file" id="productImage" accept="image/*" required 
+                                       style="border: 2px dashed #667eea; padding: 20px; text-align: center;">
+                                <small style="color: #666;">Take a clear photo for accurate AI assessment</small>
+                            </div>
+                            <button type="submit" class="btn">🔍 Record Assessment</button>
+                        </form>
+                        <div class="result" id="freshnessResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📸 CNN Package Assessment</h3>
+                        <p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+                            Upload a photo of the package arrival for automatic freshness assessment using AI
+                        </p>
+                        <form id="packageAssessmentForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label>📦 Package Photo (Required)</label>
+                                <input type="file" id="packageImage" accept="image/*" required 
+                                       style="border: 2px dashed #667eea; padding: 20px; text-align: center;">
+                                <small style="color: #666;">Take a clear photo of the product for AI analysis</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" id="packageBatchId" placeholder="Enter batch ID" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Retailer ID</label>
+                                <input type="text" id="packageRetailerId" value="RETAILER_001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Product Type</label>
+                                <select id="packageProductType" required>
+                                    <option value="apples">Apples</option>
+                                    <option value="banana">Banana</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="tomato">Tomato</option>
+                                    <option value="cucumber">Cucumber</option>
+                                    <option value="carrot">Carrot</option>
+                                    <option value="potato">Potato</option>
+                                    <option value="bittergroud">Bitter Gourd</option>
+                                    <option value="capsicum">Capsicum</option>
+                                    <option value="okra">Okra</option>
+                                    <option value="strawberry">Strawberry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Is Packed Item?</label>
+                                <select id="packageIsPacked">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Notes (Optional)</label>
+                                <textarea id="packageNotes" placeholder="Package condition notes..."></textarea>
+                            </div>
+                            <button type="submit" class="btn" style="background: linear-gradient(45deg, #4CAF50, #45a049);">
+                                📸 Assess Package with AI
+                            </button>
+                        </form>
+                        <div class="result" id="packageAssessmentResult"></div>
+                        
+                        <!-- AI Results Display -->
+                        <div id="aiResultsDisplay" style="display: none; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <h4 style="margin-bottom: 15px; color: #333;">🤖 AI Analysis Results</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                                <!-- Left column with image -->
+                                <div style="flex: 1; min-width: 250px;">
+                                    <div style="margin-bottom: 15px;">
+                                        <strong>Analyzed Image:</strong>
+                                    </div>
+                                    <img id="aiResultImage" src="" alt="Analyzed produce image" style="max-width: 100%; border-radius: 4px; border: 1px solid #ddd;" />
+                                </div>
+                                
+                                <!-- Right column with stats -->
+                                <div style="flex: 2; min-width: 300px;">
+                                    <div class="stats-grid">
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="aiPrediction">-</div>
+                                            <div class="stat-label">Prediction</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="aiConfidence">-</div>
+                                            <div class="stat-label">Confidence</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="aiFreshnessScore">-</div>
+                                            <div class="stat-label">Freshness Score</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value" id="aiRecommendation">-</div>
+                                            <div class="stat-label">Recommendation</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🤖 AI Shelf Life Prediction</h3>
+                        <form id="predictionForm">
+                            <div class="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" id="predBatchId" placeholder="Enter batch ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Current Temperature (°C)</label>
+                                <input type="number" id="predTemp" value="4.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Current Humidity (%)</label>
+                                <input type="number" id="predHumidity" value="85.0" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Product Type</label>
+                                <input type="text" id="predProductType" value="apple">
+                            </div>
+                            <div class="form-group">
+                                <label>Harvest Date</label>
+                                <input type="date" id="predHarvestDate">
+                            </div>
+                            <button type="submit" class="btn">🤖 Get AI Prediction</button>
+                        </form>
+                        <div class="result" id="predictionResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Retailer Management Tab -->
+            <div class="tab-content" id="retailer-manage">
+                <h2>📊 Retailer Management Dashboard</h2>
+                
+                <!-- Retailer ID Selection -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>🏪 Select Retailer</h3>
+                    <div class="form-group">
+                        <label>Retailer ID</label>
+                        <select id="manageRetailerId" onchange="loadRetailerDashboard()">
+                            <option value="RETAILER_001">Retailer 001</option>
+                            <option value="RETAILER_002">Retailer 002</option>
+                            <option value="RETAILER_003">Retailer 003</option>
+                        </select>
+                        <button class="btn" onclick="loadRetailerDashboard()">🔄 Refresh Dashboard</button>
+                    </div>
+                </div>
+
+                <div class="dashboard">
+                    <!-- Analytics Cards -->
+                    <div class="card">
+                        <h3>📈 Key Metrics</h3>
+                        <div id="retailerMetrics" class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalBatches">-</div>
+                                <div class="stat-label">Total Batches</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="currentStock">-</div>
+                                <div class="stat-label">Current Stock</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalRevenue">-</div>
+                                <div class="stat-label">Total Revenue</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="stockTurnover">-</div>
+                                <div class="stat-label">Stock Turnover %</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receive New Batch -->
+                    <div class="card">
+                        <h3>📦 Receive New Batch</h3>
+                        <form id="receiveBatchForm">
+                            <div class="form-group">
+                                <label>Batch ID</label>
+                                <input type="text" id="receiveBatchId" placeholder="Enter batch ID" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Received Quantity</label>
+                                <input type="number" id="receivedQuantity" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price per Unit ($)</label>
+                                <input type="number" id="pricePerUnit" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Selling Price ($)</label>
+                                <input type="number" id="sellingPrice" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Notes</label>
+                                <textarea id="receiveNotes" placeholder="Any notes about this shipment..."></textarea>
+                            </div>
+                            <button type="submit" class="btn">📦 Receive Batch</button>
+                        </form>
+                        <div class="result" id="receiveBatchResult"></div>
+                    </div>
+
+                    <!-- Current Inventory -->
+                    <div class="card">
+                        <h3>📋 Current Inventory</h3>
+                        <button class="btn" onclick="loadInventory()">🔄 Refresh Inventory</button>
+                        <div id="inventoryList" style="margin-top: 15px;">
+                            <!-- Inventory items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Record Sale -->
+                    <div class="card">
+                        <h3>💰 Record Sale</h3>
+                        <form id="recordSaleForm">
+                            <div class="form-group">
+                                <label>Inventory Item</label>
+                                <select id="saleInventoryId" required>
+                                    <option value="">Select inventory item...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantity Sold</label>
+                                <input type="number" id="quantitySold" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Unit Price ($)</label>
+                                <input type="number" id="saleUnitPrice" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="paymentMethod">
+                                    <option value="cash">Cash</option>
+                                    <option value="card">Credit/Debit Card</option>
+                                    <option value="digital">Digital Payment</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Customer Info (Optional)</label>
+                                <textarea id="customerInfo" placeholder="Customer details, phone, etc..."></textarea>
+                            </div>
+                            <button type="submit" class="btn">💰 Record Sale</button>
+                        </form>
+                        <div class="result" id="recordSaleResult"></div>
+                    </div>
+
+                    <!-- AI Suggestions -->
+                    <div class="card">
+                        <h3>🤖 AI Suggestions</h3>
+                        <button class="btn" onclick="loadAISuggestions()">🔄 Get New Suggestions</button>
+                        <div id="aiSuggestionsList" style="margin-top: 15px;">
+                            <!-- AI suggestions will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics">
+                <h2>📊 Analytics & Traceability</h2>
+                <div class="dashboard">
+                    <div class="card">
+                        <h3>🔍 Full Traceability</h3>
+                        <div class="form-group">
+                            <label>Batch ID</label>
+                            <input type="text" id="traceBatchId" placeholder="Enter batch ID">
+                        </div>
+                        <button class="btn" onclick="getFullTrace()">🔍 Get Full Trace</button>
+                        <div class="result" id="traceResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📊 Vehicle Environmental Data</h3>
+                        <div class="form-group">
+                            <label>Vehicle ID</label>
+                            <input type="text" id="envVehicleId" value="TRUCK_001">
+                        </div>
+                        <div class="form-group">
+                            <label>Hours</label>
+                            <select id="envHours">
+                                <option value="1">Last 1 Hour</option>
+                                <option value="6">Last 6 Hours</option>
+                                <option value="24" selected>Last 24 Hours</option>
+                                <option value="168">Last 7 Days</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="getEnvironmentalData()">📊 Get Data</button>
+                        <div class="result" id="envDataResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔍 Freshness History</h3>
+                        <div class="form-group">
+                            <label>Batch ID</label>
+                            <input type="text" id="freshHistoryBatchId" placeholder="Enter batch ID">
+                        </div>
+                        <button class="btn" onclick="getFreshnessHistory()">🔍 Get History</button>
+                        <div class="result" id="freshHistoryResult"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 All Batches</h3>
+                        <div class="form-group">
+                            <label>Limit</label>
+                            <input type="number" id="batchLimit" value="10" min="1" max="100">
+                        </div>
+                        <button class="btn" onclick="getAllBatches()">📋 List Batches</button>
+                        <div class="result" id="allBatchesResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="api-section">
+            <h2>🔧 System Status</h2>
+            <button class="btn" onclick="checkHealth()">🔍 Check API Health</button>
+            <div class="result" id="healthResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('harvestDate').value = today;
+            document.getElementById('predHarvestDate').value = today;
+            
+            // Load initial dashboard stats
+            loadDashboardStats();
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to selected tab
+            event.target.classList.add('active');
+        }
+
+        // API Helper Functions
+        async function apiCall(endpoint, method = 'GET', data = null, isFormData = false) {
+            const config = {
+                method: method,
+                headers: {}
+            };
+
+            if (data) {
+                if (isFormData) {
+                    config.body = data;
+                } else {
+                    config.headers['Content-Type'] = 'application/json';
+                    config.body = JSON.stringify(data);
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, config);
+                
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    try {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || `HTTP ${response.status}`);
+                    } catch (jsonError) {
+                        // If JSON parsing fails, try to get text
+                        const errorText = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                    }
+                }
+                
+                // Try parsing the JSON response
+                try {
+                    const result = await response.json();
+                    return { success: true, data: result };
+                } catch (jsonError) {
+                    console.error('JSON parse error:', jsonError);
+                    return { success: false, error: `Error parsing server response: ${jsonError.message}` };
+                }
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function showResult(elementId, result, data = null) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            
+            if (result.success) {
+                element.className = 'result success';
+                element.innerHTML = `
+                    <strong>✅ Success!</strong><br>
+                    ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+                `;
+            } else {
+                element.className = 'result error';
+                element.innerHTML = `<strong>❌ Error:</strong> ${result.error}`;
+            }
+        }
+
+        // Dashboard Stats
+        async function loadDashboardStats() {
+            const result = await apiCall('/api/dashboard/stats');
+            
+            if (result.success) {
+                const stats = result.data;
+                document.getElementById('totalBatches').textContent = stats.total_batches;
+                document.getElementById('activeTransports').textContent = stats.active_transports;
+                document.getElementById('qualityAlerts').textContent = stats.quality_alerts;
+                document.getElementById('avgQuality').textContent = stats.avg_quality_score.toFixed(3);
+                document.getElementById('approvalRate').textContent = stats.approval_rate + '%';
+            }
+        }
+
+        // Manufacturer Operations
+        document.getElementById('batchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                product_name: document.getElementById('productName').value,
+                quantity: parseFloat(document.getElementById('quantity').value),
+                harvest_date: document.getElementById('harvestDate').value + 'T00:00:00',
+                origin: document.getElementById('origin').value,
+                quality_metrics: {
+                    freshness_score: parseInt(document.getElementById('freshnessScore').value),
+                    organic: true,
+                    pesticide_free: true
+                }
+            };
+            
+            const result = await apiCall('/api/batches', 'POST', data);
+            showResult('batchResult', result, result.data);
+        });
+
+        async function lookupBatch() {
+            const batchId = document.getElementById('lookupBatchId').value;
+            if (!batchId) {
+                showResult('lookupResult', { success: false, error: 'Please enter a batch ID' });
+                return;
+            }
+            
+            const result = await apiCall(`/api/batches/${batchId}`);
+            showResult('lookupResult', result, result.data);
+        }
+
+        // Transporter Operations
+        document.getElementById('environmentalForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                vehicle_id: document.getElementById('vehicleId').value,
+                batch_ids: document.getElementById('batchIds').value.split(',').map(id => id.trim()),
+                temperature: parseFloat(document.getElementById('temperature').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                gps_latitude: document.getElementById('gpsLat').value ? parseFloat(document.getElementById('gpsLat').value) : null,
+                gps_longitude: document.getElementById('gpsLng').value ? parseFloat(document.getElementById('gpsLng').value) : null,
+                timestamp: new Date().toISOString()
+            };
+            
+            const result = await apiCall('/api/environmental/readings', 'POST', data);
+            showResult('environmentalResult', result, result.data);
+        });
+
+        document.getElementById('qrScanForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                batch_id: document.getElementById('scanBatchId').value,
+                operator_id: document.getElementById('operatorId').value,
+                operator_type: 'transporter',
+                scan_type: document.getElementById('scanType').value,
+                vehicle_id: document.getElementById('scanVehicleId').value,
+                location: document.getElementById('scanLocation').value,
+                temperature: parseFloat(document.getElementById('temperature').value),
+                humidity: parseFloat(document.getElementById('humidity').value),
+                timestamp: new Date().toISOString()
+            };
+            
+            const result = await apiCall('/api/qr/scan', 'POST', data);
+            showResult('qrScanResult', result, result.data);
+        });
+
+        // Retailer Operations
+        document.getElementById('freshnessForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            
+            // Add required fields to formData
+            formData.append('batch_id', document.getElementById('freshBatchId').value);
+            formData.append('assessed_by', document.getElementById('retailerId').value);
+            
+            // Add notes - combine all assessment data into notes field
+            const visualNotes = document.getElementById('visualNotes').value;
+            const productType = document.getElementById('productType').value;
+            const freshnessCategory = document.getElementById('freshnessCategory').value;
+            const isPacked = document.getElementById('isPacked').value === 'true' ? 'Yes' : 'No';
+            
+            const notesContent = `Product Type: ${productType}
+Freshness Category: ${freshnessCategory}
+Is Packed: ${isPacked}
+Notes: ${visualNotes}`;
+            
+            formData.append('notes', notesContent);
+            
+            // Add image if provided - required for freshness assessment
+            const imageFile = document.getElementById('productImage').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            } else {
+                showResult('freshnessResult', { success: false, error: 'Please select an image file' });
+                return;
+            }
+            
+            // Use fetch directly with FormData since we need to upload the image
+            try {
+                const response = await fetch('/api/freshness/assess', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showResult('freshnessResult', result, result);
+            } catch (error) {
+                console.error('Freshness assessment error:', error);
+                showResult('freshnessResult', { success: false, error: 'Network error: ' + error.message });
+            }
+        });
+
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                batch_id: document.getElementById('predBatchId').value,
+                current_temp: parseFloat(document.getElementById('predTemp').value),
+                current_humidity: parseFloat(document.getElementById('predHumidity').value),
+                product_type: document.getElementById('predProductType').value,
+                harvest_date: document.getElementById('predHarvestDate').value + 'T00:00:00'
+            };
+            
+            const result = await apiCall('/api/predict/shelf-life', 'POST', data);
+            showResult('predictionResult', result, result.data);
+        });
+
+        // CNN Package Assessment
+        document.getElementById('packageAssessmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const imageFile = document.getElementById('packageImage').files[0];
+            if (!imageFile) {
+                showResult('packageAssessmentResult', { success: false, error: 'Please select an image file' });
+                return;
+            }
+            
+            // Create FormData for multipart upload
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            formData.append('batch_id', document.getElementById('packageBatchId').value);
+            formData.append('retailer_id', document.getElementById('packageRetailerId').value);
+            formData.append('product_type', document.getElementById('packageProductType').value);
+            formData.append('is_packed', document.getElementById('packageIsPacked').value);
+            
+            // Enhanced notes with product info
+            const productType = document.getElementById('packageProductType').value;
+            const isPacked = document.getElementById('packageIsPacked').value === 'true' ? 'Yes' : 'No';
+            const userNotes = document.getElementById('packageNotes').value || '';
+            
+            const notes = `Product Type: ${productType}\nIs Packed: ${isPacked}\nUser Notes: ${userNotes}`;
+            formData.append('notes', notes);
+            
+            try {
+                // Show loading state
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = '🔄 Analyzing with AI...';
+                submitBtn.disabled = true;
+                
+                // Make API call with FormData
+                const response = await fetch('/api/retailer/package-assessment', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error response:', errorText);
+                    showResult('packageAssessmentResult', { 
+                        success: false, 
+                        error: `Server error (${response.status}): ${errorText.substring(0, 100)}...` 
+                    });
+                    return;
+                }
+                
+                // Try parsing JSON response
+                try {
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Show success message
+                        showResult('packageAssessmentResult', result, result);
+                        
+                        // Display AI results in the special section
+                        displayAIResults(result);
+                    } else {
+                        showResult('packageAssessmentResult', { success: false, error: result.detail || 'Assessment failed' });
+                    }
+                } catch (jsonError) {
+                    console.error('JSON parse error:', jsonError);
+                    showResult('packageAssessmentResult', { 
+                        success: false, 
+                        error: `Error parsing server response: ${jsonError.message}` 
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Package assessment error:', error);
+                showResult('packageAssessmentResult', { success: false, error: 'Network error: ' + error.message });
+                
+                // Reset button
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Function to display AI results in the special section
+        function displayAIResults(result) {
+            console.log("Displaying AI results:", result);
+            const aiDisplay = document.getElementById('aiResultsDisplay');
+            
+            // Check if we have all the required fields from the CNN assessment
+            if (!result.prediction) {
+                console.error("Missing prediction in result:", result);
+                return;
+            }
+            
+            // Update prediction with color coding
+            const predictionEl = document.getElementById('aiPrediction');
+            predictionEl.textContent = result.prediction.toUpperCase();
+            predictionEl.style.color = result.prediction === 'fresh' ? '#4CAF50' : '#f44336';
+            
+            // Update confidence as percentage (if available)
+            if (result.confidence !== undefined) {
+                document.getElementById('aiConfidence').textContent = (result.confidence * 100).toFixed(1) + '%';
+            } else {
+                document.getElementById('aiConfidence').textContent = 'N/A';
+            }
+            
+            // Update freshness score (if available)
+            if (result.freshness_score !== undefined) {
+                document.getElementById('aiFreshnessScore').textContent = (result.freshness_score * 100).toFixed(1) + '%';
+            } else {
+                document.getElementById('aiFreshnessScore').textContent = 'N/A';
+            }
+            
+            // Update recommendation with color coding
+            const recommendationEl = document.getElementById('aiRecommendation');
+            const acceptable = result.acceptable_for_sale !== undefined 
+                ? result.acceptable_for_sale 
+                : (result.prediction === 'fresh');
+                
+            recommendationEl.textContent = acceptable ? 'ACCEPT' : 'REJECT';
+            recommendationEl.style.color = acceptable ? '#4CAF50' : '#f44336';
+            
+            // Display the image if available
+            if (result.image_url) {
+                console.log("Image URL found:", result.image_url);
+                const imageEl = document.getElementById('aiResultImage');
+                imageEl.src = result.image_url;
+                imageEl.style.display = 'block';
+                
+                // Add error handling for image loading
+                imageEl.onerror = function() {
+                    console.error("Error loading image from:", result.image_url);
+                    imageEl.alt = "Error loading image";
+                    imageEl.style.border = "1px solid #f44336";
+                };
+                
+                imageEl.onload = function() {
+                    console.log("Image loaded successfully");
+                    imageEl.style.border = "1px solid #4CAF50";
+                };
+            } else {
+                console.warn("No image URL in the response");
+            }
+            
+            // Show the AI results section
+            aiDisplay.style.display = 'block';
+            
+            // Scroll to results
+            aiDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Analytics Operations
+        async function getFullTrace() {
+            const batchId = document.getElementById('traceBatchId').value;
+            if (!batchId) {
+                showResult('traceResult', { success: false, error: 'Please enter a batch ID' });
+                return;
+            }
+            
+            const result = await apiCall(`/api/trace/${batchId}`);
+            showResult('traceResult', result, result.data);
+        }
+
+        async function getEnvironmentalData() {
+            const vehicleId = document.getElementById('envVehicleId').value;
+            const hours = document.getElementById('envHours').value;
+            
+            const result = await apiCall(`/api/environmental/vehicle/${vehicleId}?hours=${hours}`);
+            showResult('envDataResult', result, result.data);
+        }
+
+        async function getFreshnessHistory() {
+            const batchId = document.getElementById('freshHistoryBatchId').value;
+            if (!batchId) {
+                showResult('freshHistoryResult', { success: false, error: 'Please enter a batch ID' });
+                return;
+            }
+            
+            const result = await apiCall(`/api/freshness/batch/${batchId}`);
+            showResult('freshHistoryResult', result, result.data);
+        }
+
+        async function getAllBatches() {
+            const limit = document.getElementById('batchLimit').value;
+            const result = await apiCall(`/api/batches?limit=${limit}`);
+            showResult('allBatchesResult', result, result.data);
+        }
+
+        // System Status
+        async function checkHealth() {
+            const result = await apiCall('/health');
+            showResult('healthResult', result, result.data);
+        }
+
+        // ========================
+        // RETAILER MANAGEMENT FUNCTIONS
+        // ========================
+
+        async function loadRetailerDashboard() {
+            const retailerId = document.getElementById('manageRetailerId').value;
+            if (!retailerId) return;
+
+            try {
+                const analytics = await apiCall(`/api/retailer/${retailerId}/analytics`);
+                if (analytics.success) {
+                    updateRetailerMetrics(analytics);
+                }
+                
+                await loadInventory();
+                await loadAISuggestions();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function updateRetailerMetrics(analytics) {
+            document.getElementById('totalBatches').textContent = analytics.inventory.total_batches;
+            document.getElementById('currentStock').textContent = analytics.inventory.current_stock;
+            document.getElementById('totalRevenue').textContent = '$' + analytics.financial.total_revenue.toFixed(2);
+            document.getElementById('stockTurnover').textContent = analytics.inventory.stock_turnover.toFixed(1) + '%';
+        }
+
+        async function loadInventory() {
+            const retailerId = document.getElementById('manageRetailerId').value;
+            const result = await apiCall(`/api/retailer/${retailerId}/inventory`);
+            
+            if (result.success && result.inventory) {
+                displayInventory(result.inventory);
+                updateInventorySelect(result.inventory);
+            }
+        }
+
+        function displayInventory(inventory) {
+            const container = document.getElementById('inventoryList');
+            
+            if (inventory.length === 0) {
+                container.innerHTML = '<p>No inventory items found.</p>';
+                return;
+            }
+
+            let html = '<div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr style="background: #f5f5f5;"><th>Product</th><th>Batch</th><th>Current Stock</th><th>Status</th><th>AI Prediction</th><th>Expires</th><th>Actions</th></tr>';
+            
+            inventory.forEach(item => {
+                const statusColor = getStatusColor(item.status, item.freshness_status);
+                const aiColor = item.ai_prediction === 'fresh' ? '#4CAF50' : item.ai_prediction === 'rotten' ? '#f44336' : '#666';
+                
+                html += `<tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px;">${item.product_name}</td>
+                    <td style="padding: 8px;">${item.batch_number}</td>
+                    <td style="padding: 8px;">${item.current_quantity}</td>
+                    <td style="padding: 8px; color: ${statusColor};">${item.status}</td>
+                    <td style="padding: 8px; color: ${aiColor};">${item.ai_prediction} (${(item.ai_confidence * 100).toFixed(0)}%)</td>
+                    <td style="padding: 8px;">${new Date(item.expiry_date).toLocaleDateString()}</td>
+                    <td style="padding: 8px;">
+                        <button onclick="quickSale('${item.id}')" style="padding: 4px 8px; margin: 2px;">💰 Quick Sale</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</table></div>';
+            container.innerHTML = html;
+        }
+
+        function getStatusColor(status, freshnessStatus) {
+            if (status === 'out_of_stock') return '#f44336';
+            if (status === 'low_stock') return '#ff9800';
+            if (freshnessStatus === 'expired') return '#f44336';
+            if (freshnessStatus === 'expiring_soon') return '#ff9800';
+            return '#4CAF50';
+        }
+
+        function updateInventorySelect(inventory) {
+            const select = document.getElementById('saleInventoryId');
+            select.innerHTML = '<option value="">Select inventory item...</option>';
+            
+            inventory.forEach(item => {
+                if (item.current_quantity > 0) {
+                    select.innerHTML += `<option value="${item.id}">${item.product_name} - ${item.batch_number} (${item.current_quantity} available)</option>`;
+                }
+            });
+        }
+
+        async function loadAISuggestions() {
+            const retailerId = document.getElementById('manageRetailerId').value;
+            const result = await apiCall(`/api/retailer/${retailerId}/suggestions`);
+            
+            if (result.success && result.suggestions) {
+                displayAISuggestions(result.suggestions);
+            }
+        }
+
+        function displayAISuggestions(suggestions) {
+            const container = document.getElementById('aiSuggestionsList');
+            
+            if (suggestions.length === 0) {
+                container.innerHTML = '<p>No new suggestions available. Check back later!</p>';
+                return;
+            }
+
+            let html = '';
+            suggestions.forEach(suggestion => {
+                const priorityColor = suggestion.priority === 'high' ? '#f44336' : 
+                                   suggestion.priority === 'medium' ? '#ff9800' : '#4CAF50';
+                
+                html += `<div class="suggestion-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid ${priorityColor};">
+                    <h4 style="margin: 0 0 10px 0; color: ${priorityColor};">${suggestion.title}</h4>
+                    <p style="margin: 0 0 10px 0;">${suggestion.description}</p>
+                    <div style="margin: 10px 0;">
+                        <strong>Action Items:</strong>
+                        <ul style="margin: 5px 0;">
+                            ${suggestion.action_items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ${suggestion.estimated_impact ? `<p style="font-style: italic; color: #666;">Impact: ${suggestion.estimated_impact}</p>` : ''}
+                    <div style="margin-top: 10px;">
+                        <button onclick="markSuggestionRead('${suggestion.id || 'temp'}')" class="btn" style="padding: 5px 10px; margin-right: 5px;">✓ Mark Read</button>
+                        <button onclick="markSuggestionImplemented('${suggestion.id || 'temp'}')" class="btn" style="padding: 5px 10px;">✅ Implemented</button>
+                    </div>
+                </div>`;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Event Listeners for Forms
+        document.getElementById('receiveBatchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('batch_id', document.getElementById('receiveBatchId').value);
+            formData.append('retailer_id', document.getElementById('manageRetailerId').value);
+            formData.append('received_quantity', document.getElementById('receivedQuantity').value);
+            formData.append('price_per_unit', document.getElementById('pricePerUnit').value);
+            formData.append('selling_price', document.getElementById('sellingPrice').value);
+            formData.append('notes', document.getElementById('receiveNotes').value);
+            
+            try {
+                const response = await fetch('/api/retailer/receive-batch', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showResult('receiveBatchResult', result, result);
+                
+                if (result.success) {
+                    this.reset();
+                    await loadRetailerDashboard();
+                }
+            } catch (error) {
+                showResult('receiveBatchResult', { success: false, error: 'Network error: ' + error.message });
+            }
+        });
+
+        document.getElementById('recordSaleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('inventory_id', document.getElementById('saleInventoryId').value);
+            formData.append('retailer_id', document.getElementById('manageRetailerId').value);
+            formData.append('quantity_sold', document.getElementById('quantitySold').value);
+            formData.append('unit_price', document.getElementById('saleUnitPrice').value);
+            formData.append('payment_method', document.getElementById('paymentMethod').value);
+            formData.append('customer_info', document.getElementById('customerInfo').value);
+            
+            try {
+                const response = await fetch('/api/retailer/record-sale', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showResult('recordSaleResult', result, result);
+                
+                if (result.success) {
+                    this.reset();
+                    await loadRetailerDashboard();
+                }
+            } catch (error) {
+                showResult('recordSaleResult', { success: false, error: 'Network error: ' + error.message });
+            }
+        });
+
+        function quickSale(inventoryId) {
+            document.getElementById('saleInventoryId').value = inventoryId;
+            document.getElementById('quantitySold').value = 1;
+            document.getElementById('quantitySold').focus();
+        }
+
+        async function markSuggestionRead(suggestionId) {
+            if (suggestionId === 'temp') return;
+            
+            try {
+                await apiCall(`/api/retailer/suggestions/${suggestionId}/mark-read`, 'POST');
+                await loadAISuggestions();
+            } catch (error) {
+                console.error('Error marking suggestion as read:', error);
+            }
+        }
+
+        async function markSuggestionImplemented(suggestionId) {
+            if (suggestionId === 'temp') return;
+            
+            try {
+                await apiCall(`/api/retailer/suggestions/${suggestionId}/mark-implemented`, 'POST');
+                await loadAISuggestions();
+            } catch (error) {
+                console.error('Error marking suggestion as implemented:', error);
+            }
+        }
+
+        // Load dashboard when tab is switched
+        function switchTab(tabName) {
+            // Existing tab switching logic
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Load retailer dashboard if switching to retailer management
+            if (tabName === 'retailer-manage') {
+                loadRetailerDashboard();
+            }
+        }
+    </script>
+</body>
+</html>

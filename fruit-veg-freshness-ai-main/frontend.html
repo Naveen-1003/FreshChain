@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit & Vegetable Freshness API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            white-space: pre-line;
+        }
+        .success {
+            background-color: #d5edda;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        .loading {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .image-preview {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍎 Fruit & Vegetable Freshness API</h1>
+        <p>This API provides two main functionalities:</p>
+        <ul>
+            <li><strong>Freshness Evaluation:</strong> Upload an image to evaluate freshness</li>
+            <li><strong>Shelf Life Prediction:</strong> Predict shelf life based on storage conditions</li>
+        </ul>
+    </div>
+
+    <div class="grid">
+        <!-- Freshness Evaluation Section -->
+        <div class="container">
+            <h2>📸 Freshness Evaluation</h2>
+            <div class="form-group">
+                <label for="imageFile">Upload Image:</label>
+                <input type="file" id="imageFile" accept="image/*" onchange="previewImage(this)">
+                <img id="imagePreview" class="image-preview" style="display: none;">
+            </div>
+            <button onclick="evaluateFreshness()">Evaluate Freshness</button>
+            <div id="freshnessResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Shelf Life Prediction Section -->
+        <div class="container">
+            <h2>⏰ Shelf Life Prediction</h2>
+            <div class="form-group">
+                <label for="fruitName">Fruit/Vegetable:</label>
+                <select id="fruitName">
+                    <option value="">Select an item...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="temperature">Storage Temperature (°C):</label>
+                <input type="number" id="temperature" placeholder="e.g., 5" step="0.1">
+            </div>
+            <button onclick="predictShelfLife()">Predict Shelf Life</button>
+            <div id="shelfLifeResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Available Items Section -->
+    <div class="container">
+        <h2>📋 Available Items</h2>
+        <button onclick="loadAvailableItems()">Load Available Items</button>
+        <div id="availableItems" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        // Load available items on page load
+        window.onload = function() {
+            loadAvailableItemsForSelect();
+        };
+
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function showResult(elementId, content, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = content;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        async function evaluateFreshness() {
+            const fileInput = document.getElementById('imageFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showResult('freshnessResult', 'Please select an image file.', 'error');
+                return;
+            }
+
+            showResult('freshnessResult', 'Evaluating freshness...', 'loading');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${API_BASE}/evaluate-freshness`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const content = `✅ Freshness Evaluation Results:
+📊 Prediction Score: ${result.prediction_score.toFixed(4)}
+🏷️ Category: ${result.freshness_category}
+💯 Confidence: ${(result.confidence * 100).toFixed(1)}%
+💬 Message: ${result.message}`;
+                    showResult('freshnessResult', content, 'success');
+                } else {
+                    showResult('freshnessResult', `❌ Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showResult('freshnessResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function predictShelfLife() {
+            const fruitName = document.getElementById('fruitName').value;
+            const temperature = document.getElementById('temperature').value;
+
+            if (!fruitName || !temperature) {
+                showResult('shelfLifeResult', 'Please select a fruit/vegetable and enter temperature.', 'error');
+                return;
+            }
+
+            showResult('shelfLifeResult', 'Predicting shelf life...', 'loading');
+
+            try {
+                const response = await fetch(`${API_BASE}/predict-shelf-life`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fruit_name: fruitName,
+                        storage_temperature: parseFloat(temperature)
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const content = `✅ Shelf Life Prediction Results:
+📦 Product: ${result.product}
+🌡️ Storage Temperature: ${result.storage_temperature}°C
+🔬 Spoilage Metric: ${result.spoilage_metric}
+🧪 Activation Energy: ${result.activation_energy_kj_mol.toFixed(1)} kJ/mol
+📉 Degradation Rate: ${result.degradation_rate.toExponential(3)} /day
+📊 Shelf Life Ratio: ${result.shelf_life_ratio.toFixed(2)}
+💡 Conclusion: ${result.conclusion}
+🎯 Compared to ${result.comparison_temperature}°C storage`;
+                    showResult('shelfLifeResult', content, 'success');
+                } else {
+                    showResult('shelfLifeResult', `❌ Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showResult('shelfLifeResult', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadAvailableItems() {
+            showResult('availableItems', 'Loading available items...', 'loading');
+
+            try {
+                const response = await fetch(`${API_BASE}/available-items`);
+                const result = await response.json();
+
+                if (response.ok) {
+                    let content = `📋 Available Items (${result.total_count} total):\n\n`;
+                    for (const [item, details] of Object.entries(result.available_items)) {
+                        content += `🍎 ${item.charAt(0).toUpperCase() + item.slice(1)}\n`;
+                        content += `   Metric: ${details.metric}\n`;
+                        content += `   Activation Energy: ${details.activation_energy_kj_mol.toFixed(1)} kJ/mol\n\n`;
+                    }
+                    showResult('availableItems', content, 'success');
+                } else {
+                    showResult('availableItems', `❌ Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showResult('availableItems', `❌ Network Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadAvailableItemsForSelect() {
+            try {
+                const response = await fetch(`${API_BASE}/available-items`);
+                const result = await response.json();
+
+                if (response.ok) {
+                    const select = document.getElementById('fruitName');
+                    select.innerHTML = '<option value="">Select an item...</option>';
+                    
+                    for (const item of Object.keys(result.available_items)) {
+                        const option = document.createElement('option');
+                        option.value = item;
+                        option.textContent = item.charAt(0).toUpperCase() + item.slice(1);
+                        select.appendChild(option);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load available items:', error);
+            }
+        }
+    </script>
+</body>
+</html>

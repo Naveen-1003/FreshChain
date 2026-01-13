@@ -1,0 +1,9 @@
+{
+    "epochs_completed": 40,
+    "best_val_acc": 0.9159432649612427,
+    "last_epoch": 39,
+    "last_val_acc": 0.3866186738014221,
+    "last_val_loss": 2.5778512954711914,
+    "last_train_acc": 0.8468458652496338,
+    "last_train_loss": 0.4222170114517212
+}
